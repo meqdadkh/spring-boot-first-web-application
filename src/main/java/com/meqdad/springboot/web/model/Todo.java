@@ -2,17 +2,26 @@ package com.meqdad.springboot.web.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.Size;
+
 public class Todo {
     private int id;
-    private String user;
+    private String username;		
+    
+    @Size(min=10, message="Enter at least 10 Characters...")
     private String desc;
+    
     private Date targetDate;
     private boolean isDone;
 
+    public Todo() {
+    	super();
+    }
+    
     public Todo(int id, String user, String desc, Date targetDate, boolean isDone) {
         super();
         this.id = id;
-        this.user = user;
+        this.username = user;
         this.desc = desc;
         this.targetDate = targetDate;
         this.isDone = isDone;
@@ -27,11 +36,11 @@ public class Todo {
     }
 
     public String getUser() {
-        return user;
+        return username;
     }
 
     public void setUser(String user) {
-        this.user = user;
+        this.username = user;
     }
 
     public String getDesc() {
@@ -88,7 +97,7 @@ public class Todo {
     public String toString() {
         return String.format(
                 "Todo [id=%s, user=%s, desc=%s, targetDate=%s, isDone=%s]", id,
-                user, desc, targetDate, isDone);
+                username, desc, targetDate, isDone);
     }
 
 }

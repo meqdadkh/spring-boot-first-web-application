@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
+import com.meqdad.springboot.web.service.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,12 +22,13 @@ import com.meqdad.springboot.web.service.TodoService;
 public class TodoController {
 
     @Autowired
-    TodoService todoService;
+    TodoRepository repository;
 
     @RequestMapping(value = "/list-todos", method = RequestMethod.GET)
     public String showTodos(ModelMap model) {
         String firstName = (String) model.get("firstName");
-        model.put("todos", todoService.retrieveTodos(firstName));
+        model.put("todos", repository.findByUsername(firstName));
+        //model.put("todos", todoService.retrieveTodos(firstName));
 
         return "list-todos";
     }
@@ -44,21 +46,26 @@ public class TodoController {
         if (result.hasErrors()) {
             return "todo";
         }
+
         String firstName = (String) model.get("firstName");
-        todoService.addTodo(firstName, todo.getDesc(), new Date(), false);
+        todo.setUser(firstName);
+        repository.save(todo);
+        //todoService.addTodo(firstName, todo.getDesc(), new Date(), false);
 
         return "redirect:/list-todos";
     }
 
     @RequestMapping(value = "/delete-todo", method = RequestMethod.GET)
     public String deleteTodo(@RequestParam int id) {
-        todoService.deleteTodo(id);
+        repository.deleteById(id);
+        //todoService.deleteTodo(id);
         return "redirect:/list-todos";
     }
 
     @RequestMapping(value = "/update-todo", method = RequestMethod.GET)
     public String showUpdatedTodoPage(@RequestParam int id, ModelMap model) {
-        Todo todo = todoService.retrieveTodo(id);
+        Todo todo = repository.findById(id).get();
+        //Todo todo = todoService.retrieveTodo(id);
         model.put("todo", todo);
         return "todo";
     }
@@ -70,7 +77,8 @@ public class TodoController {
             return "todo";
         }
         todo.setUser((String) model.get("firstName"));
-        todoService.updateTodo(todo);
+        repository.save(todo);
+        //todoService.updateTodo(todo);
         return "redirect:/list-todos";
     }
 
